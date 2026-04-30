@@ -1,0 +1,28 @@
+name: Deploy to HF Spaces
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'main.py'
+      - 'Dockerfile'
+      - 'requirements.txt'
+      - 'static/**'
+      - 'README.md'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync to Hugging Face
+        uses: peaceiris/actions-huggingface-sync@v1
+        with:
+          hf_token: ${{ secrets.HF_TOKEN }}
+          hf_repo_id: arwei944/proxy-mcp
+          hf_repo_type: space
+          local_dir: .
+          delete_removed: false
