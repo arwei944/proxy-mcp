@@ -32,8 +32,7 @@ CHAR_LIMIT = 50000
 REQUEST_TIMEOUT = 30
 
 mcp = FastMCP(
-    name="proxy-mcp",
-    version="1.1.0",
+    "proxy-mcp",
     instructions=(
         "Proxy MCP Server - 通过云端代理访问外网。"
         "提供网页抓取、网络搜索和通用 HTTP 代理功能。"
