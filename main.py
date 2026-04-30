@@ -389,30 +389,16 @@ async def api_index(request):
 # 构建 Starlette 应用，挂载 MCP 和前端
 # ============================================================
 
-# 获取 FastMCP 内部的 Starlette app，提取其 /mcp 路由的处理函数
+# 获取 FastMCP 内部的 Starlette app（已包含 /mcp 路由）
+# 直接在它上面添加自定义路由，避免路径冲突
 mcp_app = mcp.streamable_http_app()
-mcp_handler = None
-for route in mcp_app.routes:
-    if getattr(route, 'path', None) == '/mcp':
-        mcp_handler = route.app
-        break
+mcp_app.routes.append(Route("/", api_index, methods=["GET"]))
+mcp_app.routes.append(Route("/api/tools/proxy_fetch", api_proxy_fetch, methods=["POST"]))
+mcp_app.routes.append(Route("/api/tools/proxy_search", api_proxy_search, methods=["POST"]))
+mcp_app.routes.append(Route("/api/tools/proxy_request", api_proxy_request, methods=["POST"]))
+mcp_app.routes.append(Route("/api/tools/proxy_health", api_proxy_health, methods=["POST"]))
 
-# 构建自定义路由
-routes = [
-    # 前端页面
-    Route("/", api_index, methods=["GET"]),
-    # REST API（前端面板备用）
-    Route("/api/tools/proxy_fetch", api_proxy_fetch, methods=["POST"]),
-    Route("/api/tools/proxy_search", api_proxy_search, methods=["POST"]),
-    Route("/api/tools/proxy_request", api_proxy_request, methods=["POST"]),
-    Route("/api/tools/proxy_health", api_proxy_health, methods=["POST"]),
-    # MCP 端点（由 FastMCP 处理）
-    # 使用 Route 而非 Mount，避免 Starlette 修改 scope.path 导致 MCP 路径匹配失败
-    Route("/mcp", mcp_handler, methods=["GET", "POST", "DELETE", "OPTIONS"]),
-    Route("/mcp/{path:path}", mcp_handler, methods=["GET", "POST", "DELETE", "OPTIONS"]),
-]
-
-app = Starlette(routes=routes)
+app = mcp_app
 
 
 # ============================================================
