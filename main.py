@@ -389,8 +389,13 @@ async def api_index(request):
 # 构建 Starlette 应用，挂载 MCP 和前端
 # ============================================================
 
-# 获取 FastMCP 内部的 Starlette app
+# 获取 FastMCP 内部的 Starlette app，提取其 /mcp 路由的处理函数
 mcp_app = mcp.streamable_http_app()
+mcp_handler = None
+for route in mcp_app.routes:
+    if getattr(route, 'path', None) == '/mcp':
+        mcp_handler = route.app
+        break
 
 # 构建自定义路由
 routes = [
@@ -402,8 +407,7 @@ routes = [
     Route("/api/tools/proxy_request", api_proxy_request, methods=["POST"]),
     Route("/api/tools/proxy_health", api_proxy_health, methods=["POST"]),
     # MCP 端点（由 FastMCP 处理）
-    # streamable_http_app() 内部已有 /mcp 路由，用 "" 挂载避免路径重复
-    Mount("", app=mcp_app),
+    Mount("/mcp", app=mcp_handler),
 ]
 
 app = Starlette(routes=routes)
