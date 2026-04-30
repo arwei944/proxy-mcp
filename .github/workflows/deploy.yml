@@ -17,12 +17,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Sync to Hugging Face
-        uses: peaceiris/actions-huggingface-sync@v1
         with:
-          hf_token: ${{ secrets.HF_TOKEN }}
-          hf_repo_id: arwei944/proxy-mcp
-          hf_repo_type: space
-          local_dir: .
-          delete_removed: false
+          fetch-depth: 0
+
+      - name: Push to Hugging Face
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote add space https://arwei944:$HF_TOKEN@huggingface.co/spaces/arwei944/proxy-mcp
+          git push --force space main
