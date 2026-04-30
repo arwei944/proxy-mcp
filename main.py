@@ -38,6 +38,8 @@ mcp = FastMCP(
         "提供网页抓取、网络搜索和通用 HTTP 代理功能。"
         "适用于访问被网络限制的网站（如 X/Twitter、Google 等）。"
     ),
+    host="0.0.0.0",
+    port=7860,
 )
 
 
@@ -236,7 +238,4 @@ async def proxy_health() -> str:
 # ============================================================
 
 if __name__ == "__main__":
-    import os
-    os.environ["MCP_STREAMABLE_HTTP_HOST"] = "0.0.0.0"
-    os.environ["MCP_STREAMABLE_HTTP_PORT"] = "7860"
     mcp.run(transport="streamable-http")
