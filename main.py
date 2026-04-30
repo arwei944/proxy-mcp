@@ -407,7 +407,9 @@ routes = [
     Route("/api/tools/proxy_request", api_proxy_request, methods=["POST"]),
     Route("/api/tools/proxy_health", api_proxy_health, methods=["POST"]),
     # MCP 端点（由 FastMCP 处理）
-    Mount("/mcp", app=mcp_handler),
+    # 使用 Route 而非 Mount，避免 Starlette 修改 scope.path 导致 MCP 路径匹配失败
+    Route("/mcp", mcp_handler, methods=["GET", "POST", "DELETE", "OPTIONS"]),
+    Route("/mcp/{path:path}", mcp_handler, methods=["GET", "POST", "DELETE", "OPTIONS"]),
 ]
 
 app = Starlette(routes=routes)
