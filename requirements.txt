@@ -1,0 +1,10 @@
+requests>=2.31.0
+mcp[cli]>=1.0.0
+turndown>=7.1.0
+beautifulsoup4>=4.12.0
+duckduckgo-search>=6.0.0
+playwright>=1.49.0
+fastapi>=0.115.0
+uvicorn>=0.30.0
+httpx>=0.27.0
+lxml>=5.0.0
